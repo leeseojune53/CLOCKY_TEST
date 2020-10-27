@@ -1,13 +1,9 @@
 package com.example.clocky_user.controller;
 
+import com.example.clocky_user.Payload.Request.RegisterRequest;
 import com.example.clocky_user.model.User;
 import com.example.clocky_user.repository.UserRepository;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/User")
 @RestController
@@ -18,11 +14,17 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/insert")
-    public User insert(@RequestBody Map<String, String> map){
+    @RequestMapping(value = "/insert", method = RequestMethod.POST, produces = "application/json")
+    public User insert(@RequestBody RegisterRequest registerRequest){
         return userRepository.save(
-                new User(map.get("name"), Integer.parseInt(map.get("password")))
+                new User(registerRequest.getName(), registerRequest.getPassword())
         );
+
+    }
+
+    @GetMapping("/insert/{id}")
+    public String insertGet(@PathVariable("id") Long id){
+        return userRepository.findById(id).orElse(null).toString();
     }
 
     @GetMapping(value = "/select/{id}", produces = "application/json")
